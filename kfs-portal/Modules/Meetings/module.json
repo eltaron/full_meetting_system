@@ -1,0 +1,11 @@
+{
+    "name": "Meetings",
+    "alias": "meetings",
+    "description": "منظومة إدارة الاجتماعات ومتابعة القرارات",
+    "keywords": ["meetings", "agenda", "kfs"],
+    "priority": 2,
+    "providers": [
+        "Modules\\Meetings\\Providers\\MeetingsServiceProvider"
+    ],
+    "files": []
+}

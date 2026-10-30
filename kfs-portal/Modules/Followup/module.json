@@ -1,0 +1,11 @@
+{
+    "name": "Followup",
+    "alias": "followup",
+    "description": "منظومة التكليفات والمتابعة الإدارية",
+    "keywords": ["tasks", "followup", "assignments", "kfs"],
+    "priority": 3,
+    "providers": [
+        "Modules\\Followup\\Providers\\FollowupServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Archive",
+    "alias": "archive",
+    "description": "منظومة الأرشيف الإلكتروني لمحافظة كفر الشيخ",
+    "keywords": ["archive", "documents", "kfs"],
+    "priority": 1,
+    "providers": [
+        "Modules\\Archive\\Providers\\ArchiveServiceProvider"
+    ],
+    "files": []
+}

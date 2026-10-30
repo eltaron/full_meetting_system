@@ -1,0 +1,353 @@
+/*
+ * الهوية البصرية لمنظومة الأرشيف (كحلي رسمي + ذهبي)
+ * ملف CSS عادي بدون build، يُحمّل في لوحتي الإدارة والموظفين
+ */
+
+:root {
+    --arc-navy: #0f3d6e;
+    --arc-navy-dark: #0a2a4d;
+    --arc-gold: #c9a227;
+    --arc-muted: #64748b;
+    --arc-border: #e2e8f0;
+    --arc-surface: #f8fafc;
+}
+
+.dark {
+    --arc-muted: #94a3b8;
+    --arc-border: #334155;
+    --arc-surface: #1e293b;
+}
+
+/* ===== الشريط العلوي والقائمة ===== */
+.fi-topbar > nav {
+    border-bottom: 3px solid var(--arc-gold);
+}
+
+.fi-sidebar-header {
+    border-bottom: 3px solid var(--arc-gold);
+}
+
+.fi-sidebar-group-label {
+    color: var(--arc-navy);
+    font-weight: 700;
+}
+
+.dark .fi-sidebar-group-label {
+    color: #93c5fd;
+}
+
+/* ===== عناوين الصفحات ===== */
+.fi-header-heading {
+    color: var(--arc-navy);
+    position: relative;
+    padding-inline-start: 0.85rem;
+}
+
+.fi-header-heading::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 15%;
+    bottom: 15%;
+    width: 5px;
+    border-radius: 3px;
+    background: var(--arc-gold);
+}
+
+.dark .fi-header-heading {
+    color: #fff;
+}
+
+/* ===== الأقسام والجداول ===== */
+.fi-section {
+    border-top: 3px solid var(--arc-navy);
+}
+
+.fi-ta-header-cell {
+    background: var(--arc-surface);
+}
+
+.fi-ta-header-cell-label {
+    font-weight: 700;
+}
+
+.fi-ta-row:hover {
+    background: rgba(15, 61, 110, 0.03);
+}
+
+/* ===== كروت الإحصائيات ===== */
+.fi-wi-stats-overview-stat {
+    border-inline-start: 4px solid var(--arc-gold);
+}
+
+/* ===== صفحة تسجيل الدخول ===== */
+.fi-simple-layout {
+    background:
+        radial-gradient(circle at 15% 20%, rgba(201, 162, 39, 0.18), transparent 40%),
+        linear-gradient(135deg, var(--arc-navy-dark) 0%, var(--arc-navy) 60%, #164e8a 100%);
+}
+
+.fi-simple-main {
+    border-top: 5px solid var(--arc-gold);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+}
+
+.arc-login-header {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.arc-login-org {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--arc-navy);
+}
+
+.dark .arc-login-org {
+    color: #fff;
+}
+
+.arc-login-system {
+    font-size: 0.95rem;
+    color: var(--arc-gold);
+    font-weight: 700;
+}
+
+.arc-login-note {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--arc-surface);
+    border: 1px dashed var(--arc-border);
+    font-size: 0.75rem;
+    color: var(--arc-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.arc-login-note-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* ===== التذييل ===== */
+.arc-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--arc-muted);
+    padding: 1.25rem 1rem;
+}
+
+/* ===== عناصر عامة ===== */
+.arc-muted {
+    color: var(--arc-muted);
+    font-size: 0.75rem;
+}
+
+.arc-center {
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.arc-empty {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--arc-muted);
+    font-size: 0.875rem;
+}
+
+/* ===== المرفقات ===== */
+.arc-attachment-list {
+    border: 1px solid var(--arc-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.arc-attachment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    flex-wrap: wrap;
+}
+
+.arc-attachment + .arc-attachment {
+    border-top: 1px solid var(--arc-border);
+}
+
+.arc-attachment-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.arc-attachment-name span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 16rem;
+}
+
+.arc-attachment-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--arc-navy);
+    flex-shrink: 0;
+}
+
+.arc-attachment-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+/* ===== دورة عمل المستند (Timeline) ===== */
+.arc-timeline {
+    position: relative;
+    margin-inline-start: 0.75rem;
+    border-inline-start: 2px solid var(--arc-border);
+    padding: 0.25rem 0;
+}
+
+.arc-timeline-item {
+    position: relative;
+    padding-inline-start: 1.75rem;
+    margin-bottom: 1.4rem;
+}
+
+.arc-timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.arc-timeline-dot {
+    position: absolute;
+    inset-inline-start: -0.8rem;
+    top: 0.1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px #fff;
+}
+
+.dark .arc-timeline-dot {
+    box-shadow: 0 0 0 4px #111827;
+}
+
+.arc-timeline-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: #fff;
+}
+
+.arc-dot-success { background: rgb(var(--success-500)); }
+.arc-dot-info    { background: rgb(var(--info-500)); }
+.arc-dot-warning { background: rgb(var(--warning-500)); }
+.arc-dot-danger  { background: rgb(var(--danger-500)); }
+.arc-dot-gray    { background: rgb(var(--gray-400)); }
+
+.arc-timeline-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.arc-time {
+    margin-inline-start: auto;
+}
+
+.arc-reason {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    color: rgb(var(--danger-600));
+}
+
+.arc-ip {
+    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    color: var(--arc-muted);
+    opacity: 0.8;
+}
+
+.arc-changes {
+    margin-top: 0.5rem;
+    width: 100%;
+    font-size: 0.78rem;
+    border: 1px solid var(--arc-border);
+    border-collapse: collapse;
+}
+
+.arc-changes th,
+.arc-changes td {
+    padding: 0.35rem 0.5rem;
+    text-align: start;
+    border-top: 1px solid var(--arc-border);
+    vertical-align: top;
+}
+
+.arc-changes th {
+    background: var(--arc-surface);
+}
+
+.arc-old {
+    color: rgb(var(--danger-600));
+    text-decoration: line-through;
+}
+
+.arc-new {
+    color: rgb(var(--success-600));
+}
+
+/* ===== ملخص دورة العمل ===== */
+.arc-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 0.75rem;
+}
+
+.arc-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.85rem;
+    border-radius: 0.75rem;
+    background: var(--arc-surface);
+    border: 1px solid var(--arc-border);
+    border-inline-start: 4px solid var(--arc-gold);
+}
+
+.arc-stat span,
+.arc-stat small {
+    font-size: 0.75rem;
+    color: var(--arc-muted);
+}
+
+.arc-stat strong {
+    font-size: 1.1rem;
+}
+
+.arc-lifecycle-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ===== الطباعة ===== */
+@media print {
+    .fi-topbar,
+    .fi-sidebar,
+    .fi-header-actions,
+    .arc-footer,
+    .fi-ta-header-toolbar {
+        display: none !important;
+    }
+}
