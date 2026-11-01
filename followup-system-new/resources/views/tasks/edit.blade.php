@@ -1,0 +1,349 @@
+@extends('layouts.app')
+
+@section('title', 'تعديل التكليف ' . $task->task_number)
+@section('page-title', 'تعديل التكليف')
+
+@section('content')
+<div class="max-w-5xl mx-auto w-full">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden form-card">
+
+        <div class="bg-primary p-6 text-white flex items-center justify-between">
+            <div>
+                <h3 class="text-2xl font-black mb-1 flex items-center gap-3">
+                    <i class="fas fa-pen text-accent"></i> تعديل بيانات التكليف
+                </h3>
+                <p class="text-slate-300 text-sm">عدّل بيانات التكليف رقم {{ $task->task_number }} المسجل بتاريخ {{ $task->received_date->format('Y-m-d') }}</p>
+            </div>
+            <div class="text-left">
+                <span class="text-xs opacity-60 uppercase block">حالة التكليف</span>
+                @include('tasks.partials.status-badge', ['status' => $task->status])
+            </div>
+        </div>
+
+        @if ($errors->any())
+            <div class="mx-8 mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm space-y-1">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
+        @if (session('success'))
+            <div class="mx-8 mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-center gap-3">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- فورم مستقل لإضافة التأشيرة (بره الفورم الرئيسي لتجنب تداخل الـ forms) --}}
+        <form id="signature-form-el" action="{{ route('tasks.signatures.store', $task) }}" method="POST" class="hidden">
+            @csrf
+        </form>
+
+        <form method="POST" action="{{ route('tasks.update', $task) }}" class="p-8 space-y-8">
+            @csrf
+            @method('PUT')
+
+            {{-- بيانات ورود التكليف --}}
+            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-6">
+                <h4 class="font-black text-primary border-r-4 border-accent pr-3">بيانات ورود التكليف</h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-500">رقم التكليف</label>
+                        <span class="block text-lg font-black text-primary font-mono">{{ $task->task_number }}</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-500">نوع المستند <span class="text-red-500">*</span></label>
+                        <select name="document_type" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                            @foreach (['وارد', 'صادر'] as $type)
+                                <option value="{{ $type }}" @selected($task->document_type === $type)>{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-500">مصدر التكليف <span class="text-red-500">*</span></label>
+                        <select name="source_id" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                            @foreach ($sources as $source)
+                                <option value="{{ $source->id }}" @selected($task->source_id === $source->id)>{{ $source->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-500">الجهة المختصة للتعامل <span class="text-red-500">*</span></label>
+                        <select name="entity_id" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                            @foreach ($entities as $entity)
+                                <option value="{{ $entity->id }}" @selected($task->entity_id === $entity->id)>{{ $entity->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-500">تاريخ الورود <span class="text-red-500">*</span></label>
+                        <input type="text" name="received_date" id="task-received-date" required
+                            value="{{ $task->received_date->format('Y-m-d') }}"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-500">أنشأه</label>
+                        <span class="block text-lg font-black text-slate-700">{{ $task->creator->name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- التخصيص والأولوية --}}
+            <div class="space-y-6">
+                <h4 class="font-black text-primary border-r-4 border-accent pr-3">التخصيص والأولوية</h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">المسؤول عن المتابعة والتنفيذ <span class="text-red-500">*</span></label>
+                        <select name="assignee_id" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                            @foreach ($staff as $person)
+                                <option value="{{ $person->id }}" @selected($task->assignee_id === $person->id)>
+                                    {{ $person->name }}{{ $person->role === 'admin' ? ' (Admin)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">الأولوية <span class="text-red-500">*</span></label>
+                        <select name="priority" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                                    @foreach (['سري', 'عاجل', 'هام وعاجل', 'عادي'] as $p)
+                                        <option value="{{ $p }}" @selected($task->priority === $p)>{{ $p }}</option>
+                                    @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">الموعد النهائي <span class="text-red-500">*</span></label>
+                        <input type="text" name="deadline" id="task-deadline" required value="{{ $task->deadline->format('Y-m-d') }}"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">موعد الرد</label>
+                        <input type="text" name="response_date" id="task-response-date" value="{{ optional($task->response_date)->format('Y-m-d') }}"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">الحالة <span class="text-red-500">*</span></label>
+                        <select name="status" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                            @foreach (['لم يبدأ', 'جاري التنفيذ', 'تم التنفيذ', 'متأخر', 'متوقف'] as $s)
+                                <option value="{{ $s }}" @selected($task->status === $s)>{{ $s }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">نسبة الإنجاز %</label>
+                        <input type="number" name="completion_percentage" min="0" max="100" value="{{ $task->completion_percentage }}"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-black text-slate-600">أيام التأخير</label>
+                        <span class="block text-lg font-black {{ $task->delay_days > 0 ? 'text-orange-600' : 'text-green-600' }}">
+                            {{ $task->delay_days > 0 ? $task->delay_days . ' يوم' : 'لا يوجد' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- وصف التكليف --}}
+            <div class="p-6 bg-blue-50 rounded-2xl border border-blue-100 space-y-4">
+                <h4 class="font-black text-primary border-r-4 border-accent pr-3">وصف التكليف</h4>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-black text-slate-600">وصف التكليف ومتن المذكرة <span class="text-red-500">*</span></label>
+                    <textarea name="description" required rows="4" placeholder="اكتب تفاصيل التكليف بالكامل..."
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">{{ $task->description }}</textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-black text-slate-600">ملاحظات</label>
+                    <textarea name="notes" rows="2"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">{{ $task->notes }}</textarea>
+                </div>
+
+                @if ($task->document_path)
+                    <div class="space-y-2 pt-4 border-t border-blue-100">
+                        <span class="block text-sm font-black text-slate-600 mb-2">المستند المرفق</span>
+                        <a href="{{ route('tasks.document', $task) }}"
+                           target="_blank"
+                           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-white font-bold hover:bg-accent-hover transition-all shadow-sm">
+                            <i class="fas fa-file-download"></i> تحميل / عرض المستند
+                        </a>
+                    </div>
+                @endif
+            </div>
+
+            {{-- سبب التعديل --}}
+            <div class="p-6 bg-yellow-50 rounded-2xl border border-yellow-100 space-y-4">
+                <h4 class="font-black text-primary border-r-4 border-accent pr-3">سبب التعديل</h4>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-black text-slate-600">سبب التعديل (اختياري - سوف يتم تسجيله في سجل التعديلات)</label>
+                    <input type="text" name="edit_note" placeholder="مثال: تعديل الموعد النهائي بناءً على طلب الجهة"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all">
+                </div>
+            </div>
+
+            {{-- إضافة تأشيرة --}}
+            <div class="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 space-y-6">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-black text-primary border-r-4 border-accent pr-3">التأشيرات</h4>
+                    <button type="button" id="add-signature-btn"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-sm">
+                        <i class="fas fa-plus"></i> إضافة تأشيرة
+                    </button>
+                </div>
+
+                @if ($task->signatures->count() > 0)
+                    <div class="space-y-4">
+                        @foreach ($task->signatures as $signature)
+                            <div class="p-4 bg-white rounded-xl border border-indigo-200 space-y-3">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <p class="font-bold text-slate-700">{{ $signature->officer?->name ?? '-' }}</p>
+                                        <p class="text-sm text-slate-500">تاريخ التأشيرة: {{ optional($signature->signature_date)->format('Y-m-d') }}</p>
+                                    </div>
+                                    <small class="text-slate-400">{{ $signature->created_at->format('Y-m-d H:i') }}</small>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-lg">
+                                    <p class="text-slate-700 leading-relaxed whitespace-pre-line">{{ $signature->signature_text }}</p>
+                                </div>
+                                @if ($signature->note)
+                                    <p class="text-sm text-slate-600"><strong>ملاحظة:</strong> {{ $signature->note }}</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-sm text-slate-500">لا توجد تأشيرات مضافة بعد</p>
+                @endif
+
+                <div id="signature-form" class="hidden p-4 bg-white rounded-xl border border-indigo-200 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-black text-slate-600">مسئول التأشيرة <span class="text-red-500">*</span></label>
+                            <select name="signature_officer_id" form="signature-form-el" required
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                                <option value="">-- اختر مسئول التأشيرة --</option>
+                                @foreach ($signatureOfficers as $officer)
+        <option value="{{ $officer->id }}" @selected(old('signature_officer_id') == $officer->id)>
+            {{ $officer->name }}{{ $officer->title ? ' - ' . $officer->title : '' }}
+        </option>
+    @endforeach
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-black text-slate-600">تاريخ التأشيرة <span class="text-red-500">*</span></label>
+                            <input type="date" name="signature_date" form="signature-form-el" required
+                                value="{{ old('signature_date', now()->format('Y-m-d')) }}"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="space-y-2 mt-4">
+                        <label class="block text-sm font-black text-slate-600">نص التأشيرة <span class="text-red-500">*</span></label>
+                        <textarea name="signature_text" form="signature-form-el" rows="3" placeholder="اكتب نص التأشيرة..." required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">{{ old('signature_text') }}</textarea>
+                    </div>
+                    <div class="space-y-2 mt-4">
+                        <label class="block text-sm font-black text-slate-600">ملاحظة</label>
+                        <input type="text" name="note" form="signature-form-el" placeholder="ملاحظة إضافية (اختياري)"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div class="flex items-center justify-end gap-2 mt-4">
+                        <button type="button" id="cancel-signature-btn"
+                            class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition-all">
+                            إلغاء
+                        </button>
+                        <button type="submit" form="signature-form-el"
+                            class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all">
+                            حفظ التأشيرة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 flex items-center justify-between gap-4">
+                <a href="{{ route('tasks.show', $task) }}"
+                    class="px-6 py-4 rounded-2xl text-slate-500 font-bold hover:bg-slate-50 transition-all">
+                    إلغاء
+                </a>
+                <button type="submit"
+                    class="flex-1 bg-primary text-white font-black py-4 rounded-2xl border-2 border-transparent hover:border-accent hover:shadow-none shadow-lg text-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-check-double text-accent"></i> حفظ التعديلات
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+<script>
+    flatpickr('#task-received-date', {
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'd/m/Y',
+        locale: 'ar'
+    });
+    flatpickr('#task-deadline', {
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'd/m/Y',
+        locale: 'ar'
+    });
+    flatpickr('#task-response-date', {
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'd/m/Y',
+        locale: 'ar'
+    });
+</script>
+@endpush
+
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addBtn = document.getElementById('add-signature-btn');
+        const sigForm = document.getElementById('signature-form');
+        const cancelBtn = document.getElementById('cancel-signature-btn');
+        
+        if (addBtn) {
+            addBtn.addEventListener('click', function() {
+                sigForm.classList.remove('hidden');
+                addBtn.classList.add('hidden');
+            });
+        }
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                sigForm.classList.add('hidden');
+                addBtn.classList.remove('hidden');
+            });
+        }
+    });
+</script>
+@endpush
+
