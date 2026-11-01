@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'لوحة متابعة التكليفات - Task Flow')
+@section('title', 'لوحة متابعة التكليفات')
 @section('page-title', 'متابعة التكليفات')
 
 @section('content')

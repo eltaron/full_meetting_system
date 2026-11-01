@@ -1,0 +1,124 @@
+/* ==========================================================================
+   KFS Follow-up — design-system overrides
+   --------------------------------------------------------------------------
+   The Follow-up (التكليفات) module ships a pre-compiled Tailwind theme built
+   around a navy `primary` and an orange `accent`, plus a dark theme toggle.
+   This file re-points those compiled utilities to the unified "KFS Royal
+   Egyptian" palette (Egyptian green + gold) and forces the light theme so the
+   module looks identical to Archive and Meetings.
+
+   It is loaded AFTER the compiled module CSS so it wins the cascade.
+   ========================================================================== */
+
+:root,
+html[data-theme='light'] {
+    /* Egyptian green as primary */
+    --kfs-primary: #144536;      /* rgb(20 69 54)  — deep green for solid surfaces */
+    --kfs-primary-ink: #185640;  /* green for text/links */
+    --kfs-accent: #c9a227;       /* rgb(201 162 39) — gold */
+    --kfs-paper: #fbfaf6;
+    --kfs-paper-2: #f4f2ea;
+    --kfs-line: #e4e0d4;
+}
+
+/* --------------------------------------------------------------------------
+   Re-map the compiled Tailwind utilities to the KFS palette.
+   -------------------------------------------------------------------------- */
+
+/* Primary — surfaces (sidebar, buttons, chips) */
+.bg-primary {
+    background-color: rgb(20 69 54 / var(--tw-bg-opacity, 1));
+}
+
+/* Primary — text / links */
+.text-primary {
+    color: rgb(24 86 64 / var(--tw-text-opacity, 1));
+}
+
+.border-primary {
+    border-color: rgb(20 69 54 / var(--tw-border-opacity, 1));
+}
+
+.from-primary {
+    --tw-gradient-from: #144536 var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(20 69 54 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-primary {
+    --tw-gradient-to: #144536 var(--tw-gradient-to-position);
+}
+
+/* Accent — gold */
+.bg-accent {
+    background-color: rgb(201 162 39 / var(--tw-bg-opacity, 1));
+}
+
+.text-accent {
+    color: rgb(168 130 30 / var(--tw-text-opacity, 1));
+}
+
+.border-accent {
+    border-color: rgb(201 162 39 / var(--tw-border-opacity, 1));
+}
+
+.ring-accent {
+    --tw-ring-color: rgb(201 162 39 / var(--tw-ring-opacity, 1));
+}
+
+/* Alpha / translucent variants (chips, halos, hover states) */
+.bg-primary\/10 { background-color: #1445361a; }
+.bg-primary\/5  { background-color: #1445360d; }
+.border-primary\/10 { border-color: #1445361a; }
+.bg-accent\/10  { background-color: #c9a2271a; }
+.border-accent\/20 { border-color: #c9a22733; }
+.ring-accent\/20 { --tw-ring-color: #c9a22733; }
+
+/* --------------------------------------------------------------------------
+   Force the light theme and neutralise the dark-theme body styling.
+   The module writes data-theme from localStorage; we pin it to light and
+   keep the paper (off-white) background instead of the dark slate.
+   -------------------------------------------------------------------------- */
+
+html[data-theme='dark'] {
+    color-scheme: light;
+}
+
+html[data-theme='dark'] body,
+body {
+    background-color: var(--kfs-paper);
+    color: #1b2b26;
+}
+
+/* The dark theme repaints cards/panels with translucent slate — bring back
+   the warm off-white surfaces so nothing renders as near-black. */
+html[data-theme='dark'] .bg-white,
+html[data-theme='dark'] [class*='bg-slate-50'],
+html[data-theme='dark'] [class*='bg-slate-100'],
+html[data-theme='dark'] .bg-bg-soft {
+    background-color: var(--kfs-paper) !important;
+    color: #1b2b26;
+}
+
+html[data-theme='dark'] .text-slate-200,
+html[data-theme='dark'] .text-slate-300,
+html[data-theme='dark'] .text-slate-400 {
+    color: #5c6b65 !important;
+}
+
+html[data-theme='dark'] .text-slate-700,
+html[data-theme='dark'] .text-slate-800,
+html[data-theme='dark'] .text-slate-900 {
+    color: #1b2b26 !important;
+}
+
+html[data-theme='dark'] .border-slate-100,
+html[data-theme='dark'] .border-slate-200 {
+    border-color: var(--kfs-line) !important;
+}
+
+/* Hide the theme toggle — the portal is light-only by design. */
+.theme-toggle,
+#dashboard-theme-toggle {
+    display: none !important;
+}

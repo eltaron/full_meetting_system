@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentFullCalendarPlugin::make()
                     ->selectable()
                     ->editable(),
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ]);
     }
 }

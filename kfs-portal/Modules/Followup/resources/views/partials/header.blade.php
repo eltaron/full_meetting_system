@@ -1,7 +1,7 @@
 @php
     $currentUser = auth()->user();
     $roleName = $currentUser?->getRoleNames()->first() ?? 'مستخدم';
-    $avatarUrl = 'https://ui-avatars.com/api/?name=' . urlencode($currentUser?->name ?? 'User') . '&background=001f3f&color=fff';
+    $avatarUrl = 'https://ui-avatars.com/api/?name=' . urlencode($currentUser?->name ?? 'User') . '&background=144536&color=fff';
 @endphp
 
 <header
@@ -12,6 +12,12 @@
     </div>
 
     <div class="flex items-center gap-2 sm:gap-4">
+        <a href="{{ url('/portal') }}" title="العودة إلى البوابة الموحدة"
+            class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-bold">
+            <i class="fas fa-th-large"></i>
+            <span class="hidden md:inline">البوابة</span>
+        </a>
+
         <div class="relative group cursor-pointer">
             <div
                 class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-100 rounded-full transition-colors relative">
@@ -42,7 +48,7 @@
 
             <div id="user-dropdown"
                 class="absolute top-14 left-0 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden hidden z-50">
-                <div class="p-4 bg-gradient-to-r from-primary to-[#003366] text-white flex items-center gap-3">
+                <div class="p-4 bg-gradient-to-r from-primary to-primary/80 text-white flex items-center gap-3">
                     <img src="{{ $avatarUrl }}" class="w-12 h-12 rounded-full border-2 border-white/40 object-cover">
                     <div>
                         <p class="font-black text-sm">{{ $currentUser?->name }}</p>

@@ -4,13 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Task Flow')</title>
+    <title>@yield('title', 'التكليفات والمتابعة') — {{ config('app.name') }}</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('assets/imgs/watania2.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     @vite(['resources/css/app.css', 'resources/css/style.css', 'resources/js/app.js'])
+
+    {{-- Unified "KFS Royal Egyptian" palette: re-points the compiled navy/orange
+         utilities to Egyptian green + gold and forces the light theme. --}}
+    <link rel="stylesheet" href="{{ asset('css/kfs-followup.css') }}">
 
     @stack('styles')
 </head>
@@ -18,8 +23,9 @@
 <body class="bg-bg-soft text-slate-800 font-cairo">
     <script>
         (function() {
-            var theme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', theme);
+            // The portal is light-only by design; ignore any stored dark preference.
+            document.documentElement.setAttribute('data-theme', 'light');
+            try { localStorage.setItem('theme', 'light'); } catch (e) {}
         })();
     </script>
 
@@ -51,7 +57,7 @@
         </main>
 
         <footer class="p-6 text-center text-slate-400 text-sm border-t border-slate-200 bg-white/50">
-            <p>جميع الحقوق محفوظة &copy; {{ date('Y') }} - Task Flow</p>
+            <p>منظومة التكليفات والمتابعة &copy; {{ date('Y') }} — محافظة كفر الشيخ</p>
         </footer>
     </div>
 
@@ -62,29 +68,8 @@
 
     <script>
         (function() {
-            var toggleBtn = document.getElementById('dashboard-theme-toggle');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', function() {
-                    var current = document.documentElement.getAttribute('data-theme');
-                    var next = current === 'dark' ? 'light' : 'dark';
-                    document.documentElement.setAttribute('data-theme', next);
-                    localStorage.setItem('theme', next);
-                    var icon = toggleBtn.querySelector('i');
-                    if (icon) {
-                        if (next === 'light') {
-                            icon.classList.replace('fa-moon', 'fa-sun');
-                        } else {
-                            icon.classList.replace('fa-sun', 'fa-moon');
-                        }
-                    }
-                });
-                var currentTheme = document.documentElement.getAttribute('data-theme');
-                var icon = toggleBtn.querySelector('i');
-                if (icon && currentTheme === 'light') {
-                    icon.classList.replace('fa-moon', 'fa-sun');
-                }
-            }
-
+            // Theme toggle is intentionally removed — the portal is light-only.
+            // Keep the user dropdown click-out behaviour.
             document.addEventListener('click', function(e) {
                 var ddBtn = document.getElementById('user-dropdown-btn');
                 var ddMenu = document.getElementById('user-dropdown');

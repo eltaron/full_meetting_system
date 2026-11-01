@@ -12,10 +12,10 @@
     <div class="p-6 flex flex-col h-full">
         <div class="flex items-center justify-between mb-10">
             <div class="flex items-center gap-3">
-                <img src="{{ asset('assets/imgs/watania.png') }}" alt="Logo"
-                    class="w-10 h-10 bg-white p-1 rounded-full shadow-lg">
+                <img src="{{ asset('logo.png') }}" alt="شعار محافظة كفر الشيخ"
+                    class="w-10 h-10 bg-white p-1 rounded-full shadow-lg object-contain">
                 <div class="flex flex-col">
-                    <span class="text-xl font-bold tracking-tight whitespace-nowrap text-white">Task Flow</span>
+                    <span class="text-xl font-bold tracking-tight whitespace-nowrap text-white">التكليفات والمتابعة</span>
                     <span class="text-[10px] font-bold text-accent">محافظة كفر الشيخ </span>
                 </div>
             </div>
@@ -169,7 +169,12 @@
 </a>
         </nav>
 
-        <div class="mt-auto border-t border-white/10 pt-6">
+        <div class="mt-auto border-t border-white/10 pt-6 space-y-2">
+            <a href="{{ url('/portal') }}"
+                class="w-full flex items-center gap-4 px-4 py-3 text-accent hover:bg-white/10 rounded-xl transition-all duration-300 font-bold">
+                <i class="fas fa-layer-group w-6 text-center"></i>
+                <span class="text-lg">البوابة الموحدة</span>
+            </a>
             <button onclick="openLogoutModal()"
                 class="w-full flex items-center gap-4 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 font-bold group">
                 <i class="fas fa-sign-out-alt w-6 text-center group-hover:-translate-x-1 transition-transform"></i>
